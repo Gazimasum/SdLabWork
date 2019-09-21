@@ -17,5 +17,8 @@ class PagesController extends Controller
    }
     public function team(){
   		return view('team');  	
+   }  
+   public function addemployee(){
+      return view('addemployee');    
    }
 }

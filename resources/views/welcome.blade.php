@@ -88,6 +88,7 @@
                     <a href="{{route('team')}}">Team</a>
                     <a href="{{route('contact')}}">Contect</a>
                     <a href="{{route('about')}}">About Us</a>
+                    <a href="{{route('addemployee')}}">Add Employee</a>
                    
                 </div>
             </div>
