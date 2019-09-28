@@ -46,6 +46,15 @@
       </div>
     </div> 
 
+    <div class="control-group">
+      <!-- E-mail -->
+      <label class="control-label" for="email">Address</label>
+      <div class="controls">
+        <input type="address" id="email" name="address" placeholder="" class="input-xlarge">
+        
+      </div>
+    </div> 
+
  
     <div class="control-group">
       <!-- Password -->
