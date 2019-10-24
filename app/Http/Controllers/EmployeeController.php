@@ -3,7 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Imageadd;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use App\Exports\EmployeeExport;
+use App\Exports\TeacherExport;
+use App\Exports\AdminExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Image;
 
 class EmployeeController extends Controller
 {
@@ -18,14 +26,41 @@ class EmployeeController extends Controller
     return view('alllist')->with('employees',$employees);
     }
 
+
+     protected function validator(array $data)
+  {
+    return Validator::make($data, [
+        'name' => 'required|unique:employees|max:15',
+        'address' => 'required|max:255',
+        'dob' => 'required|date',
+        'email' => 'required|unique:employees|email',
+        'salary' => 'numeric|min:1000|max:20000',
+         'password' => 'required|min:6|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+         'phone_no'=>'required|min:11|max:13',
+    ]);
+
+  }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $employee = Employee::create([
+              'name' => $request->name,
+                'salary'=>$request->salary,
+                  'phone_no' => $request->phone_no,
+                  'dob'=> $request->dob,
+                  'email' => $request->email,
+                  'role' => 'student',
+                  'password' => Hash::make($request->password),
+                  
+    ]);
+          session()->flash('success', 'Student Add Successfully');
+        return redirect('/admin/addstudentform');;
+
     }
 
     /**
@@ -36,13 +71,31 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+       
+      $request->validate([
+      'name' => 'required|unique:employees|max:15',     
+        'dob' => 'required|date',
+        'email' => 'required|unique:employees|email',
+        'salary' => 'numeric|min:1000|max:20000',
+         'password' => 'required|confirmed|min:6|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+         'phone_no'=>'required|min:11|max:13',
+    ],
+[
+'password.regex'  => 'Password must be one uppercase & lowercase and one number',
+]);
+
          $employee=new Employee;
          $employee->name=$request->name;
-        $employee->email=$request->email;
-        $employee->salary=$request->salary;
-        $employee->dob=$request->dob;
+         $employee->email=$request->email;
+         $employee->salary=$request->salary;
+         $employee->dob=$request->dob;
+         $employee->phone=$request->phone_no;
+         $employee->role='student';
+         $employee->password= Hash::make($request->password);
          $employee->save();
-          return redirect()->route('alllist');
+        session()->flash('success', 'Student Add Successfully');
+        return redirect('/admin/addstudentform');;
+
 
 
     }
@@ -107,5 +160,46 @@ class EmployeeController extends Controller
     }
    
     return back();
+  }
+
+
+  public function addphoto(Request $request)
+  {
+    $this->validate($request, [
+                'filename' => 'required',
+                'filename.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+        
+        if($request->hasfile('filename'))
+         {
+            foreach($request->file('filename') as $image)
+            {
+               
+                $name=time().".".$image->getClientOriginalName();
+                $image->move(public_path().'/image/', $name);  
+                 $form= new Imageadd();
+              $form->filename=$name;
+              $form->save();
+            }
+         }
+        
+         
+        
+        
+
+        return back()->with('success', 'Your images has been successfully');
+  }
+
+  public function export($id)
+  {if ($id==1) {
+      return Excel::download(new StudentExport, 'student.xlsx');
+  }
+  if ($id==2) {
+      return Excel::download(new TeacherExport, 'teacher.xlsx');
+  }
+  if ($id==3) {
+      return Excel::download(new AdminExport, 'admin.xlsx');
+  }
+   
   }
 }

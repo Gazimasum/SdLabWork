@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
          'checkloggedin' => \App\Http\Middleware\IsLoggedIn::class,
          'isstudent' => \App\Http\Middleware\IsStudent::class,
          'isteacher' => \App\Http\Middleware\IsTeacher::class,
+         'isadmin' => \App\Http\Middleware\IsAdmin::class,
     ];
 
     /**

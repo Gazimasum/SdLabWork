@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Employee;
+use App\Imageadd;
 use Session;
 
 class AuthController extends Controller
@@ -55,5 +56,32 @@ class AuthController extends Controller
     public function student2(){
 
         return view('pages.student2');
+    } 
+       public function admin(){
+
+        return view('backend.pages.index');
+    }
+
+    public function admin_table(){
+        $employees=Employee::all();
+        return view('backend.pages.table',compact('employees'));
+    }  
+    public function admin_chart(){
+
+        return view('backend.pages.chart');
+    } 
+
+     public function formview(){
+
+        return view('backend.pages.addstudent');
+    } 
+    public function excel(){
+
+        return view('backend.pages.excel.index');
+    }
+
+     public function imageadd(){
+        $images = Imageadd::all();
+        return view('backend.pages.addimage',compact('images'));
     }
 }
