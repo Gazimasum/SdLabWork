@@ -31,12 +31,12 @@
         <a class="nav-link" href="{{ route('admin.table') }}">
           <i class="fas fa-fw fa-table"></i>
           <span>Tables</span></a>
-      </li> 
+      </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ route('admin.form') }}">
           <i class="fas fa-fw fa-table"></i>
           <span>Add Student</span></a>
-      </li> 
+      </li>
 
         <li class="nav-item">
         <a class="nav-link" href="{{ route('student.photo') }}">
@@ -48,5 +48,11 @@
         <a class="nav-link" href="{{ route('excel.index') }}">
           <i class="fas fa-fw fa-table"></i>
           <span>Excel</span></a>
+      </li>
+
+        <li class="nav-item">
+        <a class="nav-link" href="{{ route('pdf.index') }}">
+          <i class="fas fa-fw fa-table"></i>
+          <span>PDF</span></a>
       </li>
     </ul>

@@ -7,11 +7,14 @@ use App\Imageadd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use App\Exports\EmployeeExport;
+use App\Exports\StudentExport;
 use App\Exports\TeacherExport;
 use App\Exports\AdminExport;
+use App\Imports\DataImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Image;
+use PDF;
+use Db;
 
 class EmployeeController extends Controller
 {
@@ -56,7 +59,7 @@ class EmployeeController extends Controller
                   'email' => $request->email,
                   'role' => 'student',
                   'password' => Hash::make($request->password),
-                  
+
     ]);
           session()->flash('success', 'Student Add Successfully');
         return redirect('/admin/addstudentform');;
@@ -71,9 +74,9 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-       
+
       $request->validate([
-      'name' => 'required|unique:employees|max:15',     
+      'name' => 'required|unique:employees|max:15',
         'dob' => 'required|date',
         'email' => 'required|unique:employees|email',
         'salary' => 'numeric|min:1000|max:20000',
@@ -158,7 +161,7 @@ class EmployeeController extends Controller
     if (!Is_null($employee)) {
       $employee->delete();
     }
-   
+
     return back();
   }
 
@@ -169,25 +172,26 @@ class EmployeeController extends Controller
                 'filename' => 'required',
                 'filename.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
-        
+
         if($request->hasfile('filename'))
          {
             foreach($request->file('filename') as $image)
             {
-               
+
                 $name=time().".".$image->getClientOriginalName();
-                $image->move(public_path().'/image/', $name);  
+                $image->move(public_path().'/image/', $name);
                  $form= new Imageadd();
               $form->filename=$name;
               $form->save();
             }
          }
-        
-         
-        
-        
 
-        return back()->with('success', 'Your images has been successfully');
+
+
+
+
+         session()->flash('success', 'Image Add Successfully');
+         return back();
   }
 
   public function export($id)
@@ -200,6 +204,37 @@ class EmployeeController extends Controller
   if ($id==3) {
       return Excel::download(new AdminExport, 'admin.xlsx');
   }
-   
+
   }
+
+  public function import(Request $request)
+  {
+        Excel::import(new DataImport,$request->file('import_file'));
+
+        session()->flash('success', 'Data Add Successfully');
+        return back();
+      }
+
+
+      //pdf
+
+      public function pdfindex()
+      {
+          $employees = Employee::all();
+       return view('backend.pages.pdf.index', compact('employees'));
+      }
+
+      public function generateInvoice($id)
+      {
+        $image = Imageadd::find(1);
+        $employee = Employee::find($id);
+
+        //return view('backend.pages.orders.invoice', compact('order'));
+
+        $pdf = PDF::loadView('backend.pages.pdf.pdf', compact('employee','image'));
+
+        return $pdf->stream('invoice.pdf');
+        //return $pdf->download('invoice.pdf');
+      }
+
 }

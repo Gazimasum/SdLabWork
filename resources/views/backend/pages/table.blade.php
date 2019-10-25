@@ -26,18 +26,48 @@
                  <th>Email</th>
                  <th>Phone</th>
                  <th>Date of Birth</th>
+                 <th>Action</th>
                </tr>
                 </thead>
-              
+
                <tbody>
                  @foreach($employees as $e)
                  <tr>
-                 
+
                   <td>{{$e->name}}</td>
                  <td>{{$e->email}}</td>
                  <td>{{$e->phone}}</td>
                  <td>{{$e->dob}}</td>
+                 <td><a href="{{ route('edit',$e->id) }}" class="btn btn-success">Edit</a>
+                             <a href="#deleteModal{{ $e->id }}" data-toggle="modal" class="btn btn-danger">Delete</a></td>
                </tr>
+
+                                   <!-- Modal -->
+                    <div class="modal fade" id="deleteModal{{ $e->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                     <div class="modal-content">
+                       <div class="modal-header">
+                         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure to delete!!</h5>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                           <span aria-hidden="true">&times;</span>
+                         </button>
+                       </div>
+                       <div class="modal-body">
+                         <form action="{{ route('delete',$e->id) }}"  method="post">
+                           {{ csrf_field() }}
+                    <button type="submit" class="btn btn-danger" >Delete</button>
+
+
+                         </form>
+                         <div class="modal-footer">
+                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                         </div>
+                       </div>
+
+                     </div>
+                    </div>
+                    </div>
                  @endforeach
                </tbody>
                  <tfoot>
@@ -46,6 +76,8 @@
                  <th>Email</th>
                  <th>Phone</th>
                  <th>Date of Birth</th>
+                 <td>Action</td>
+
             </tr>
         </tfoot>
               </table>
@@ -62,4 +94,7 @@
       <!-- /.container-fluid -->
 
     <!-- /.content-wrapper -->
+
+
+
 @endsection

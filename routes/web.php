@@ -39,13 +39,11 @@ Route::group(['middleware' => 'checkloggedin'], function(){
 
     Route::group(['middleware' => 'isteacher'], function(){
     // YOUR ROUTES HERE
-	    Route::get('teacher1','AuthController@teacher1')->name('teacher1');
-	    Route::get('teacher2', 'AuthController@teacher2')->name('teacher2');
-	}); 
+	    Route::get('teacher','AuthController@dashboard')->name('teacher.index');
+	});
 	Route::group(['middleware' => 'isstudent'], function(){
     // YOUR ROUTES HERE
-	    Route::get('student1','AuthController@student1')->name('student1');
-	    Route::get('student2', 'AuthController@student2')->name('student2');
+	     Route::get('student','AuthController@dashboard')->name('student.index');
 	});
 
 	Route::group(['middleware' => 'isadmin'], function(){
@@ -58,12 +56,17 @@ Route::group(['middleware' => 'checkloggedin'], function(){
 
 	    //excel
 	    Route::get('admin/excel','AuthController@excel')->name('excel.index');
+	    Route::post('admin/import','EmployeeController@import')->name('excel.import');
 	    Route::get('admin/exceldownload/{id}','EmployeeController@export')->name('student.export');
 	    Route::get('admin/exceldownload/{id}','EmployeeController@export')->name('teacher.export');
 	    Route::get('admin/exceldownload/{id}','EmployeeController@export')->name('admin.export');
 
 	    Route::post('admin/addstudent','EmployeeController@store')->name('student.add');
 	    Route::post('admin/storestudentpp','EmployeeController@addphoto')->name('student.photo.add');
-	    
+
+      //PDF
+        Route::get('admin/pdf/', 'EmployeeController@pdfindex')->name('pdf.index');
+        Route::get('admin/pdf/{id}', 'EmployeeController@generateInvoice')->name('admin.employee.pdf');
+
 	});
 });
